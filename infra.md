@@ -3,7 +3,7 @@
 ## Plateforme cloud
 AWS (Amazon Web Services) – Instance EC2 (Ubuntu 24.04)
 
-## Services utilisés
+# Services utilisés
 - EC2 : héberge l'application Dockerisée
 - Sécurité : Groupe avec ports 22 (SSH) et 80 (HTTP) ouverts
 - Clé SSH : campagne-key.pem
