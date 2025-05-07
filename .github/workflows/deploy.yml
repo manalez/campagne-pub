@@ -1,15 +1,35 @@
-name: Build Flask App
+name: Déploiement Flask App sur EC2
 
 on:
   push:
     branches: [ main ]
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout code
+      - name: Checkout du code
         uses: actions/checkout@v3
 
-      - name: Build Docker image
-        run: docker build -t campagne-app .
+      - name: Copier les fichiers sur le serveur EC2
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          port: ${{ secrets.EC2_PORT }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          source: "."
+          target: "~/campagne-pub"
+
+      - name: Relancer Docker sur EC2
+        uses: appleboy/ssh-action@v0.1.8
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          port: ${{ secrets.EC2_PORT }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd ~/campagne-pub
+            docker-compose down
+            docker-compose up --build -d
